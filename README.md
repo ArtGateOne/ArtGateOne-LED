@@ -19,6 +19,7 @@ Can be used with any Art-Net compliant console or DMX software
 Universe selectable by web browser
 
 Stand-alone buffer mode
+-----------
 
 WIRING
 
@@ -31,6 +32,7 @@ GND --> GND
 SCL --> SCL
 
 SDA --> SDA
+-----------
 
 LED WS2812
 
