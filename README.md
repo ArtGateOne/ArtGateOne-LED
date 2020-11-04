@@ -44,3 +44,8 @@ IN THIS SCETCH - LINE 61
 
 Brightnes i set to 10!! 
 U CAN change it to 255 max
+
+------------
+Library required
+SSD1306Ascii
+Andafruit_NeoPixel
