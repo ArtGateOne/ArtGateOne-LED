@@ -2,11 +2,15 @@
 ArtGateOne-LED
 This is simple artnet node to controll ws28xx led strip 170 x rgb.
 
-Required: Arduino UNO
+Required: 
+
+Arduino UNO
 
 Ethernet Shield with W5100/W5500
 
 OLED display 128x32
+
+WS2812 led strip
 
 -------------------------
 
@@ -19,6 +23,7 @@ Can be used with any Art-Net compliant console or DMX software
 Universe selectable by web browser
 
 Stand-alone buffer mode
+
 -----------
 
 WIRING
@@ -32,6 +37,7 @@ GND --> GND
 SCL --> SCL
 
 SDA --> SDA
+
 -----------
 
 LED WS2812
@@ -40,12 +46,18 @@ LED WS2812
 
 GND --> GND
 
+---
+
 IN THIS SCETCH - LINE 61
 
 Brightnes i set to 10!! 
 U CAN change it to 255 max
 
 ------------
+
 Library required
+
 SSD1306Ascii
+
 Andafruit_NeoPixel
+
