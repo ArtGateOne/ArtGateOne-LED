@@ -50,8 +50,11 @@ GND --> GND
 
 IN THIS SCETCH - LINE 61
 
-Brightnes i set to 10!! 
+Brightnes i set to 10!
+
 U CAN change it to 255 max
+
+Optimal is 127
 
 ------------
 
