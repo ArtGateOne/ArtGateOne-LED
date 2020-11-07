@@ -8,7 +8,7 @@ Arduino UNO
 
 Ethernet Shield with W5100/W5500
 
-OLED display 128x32
+OLED display 128x32 i2c
 
 WS2812 led strip
 
@@ -28,7 +28,7 @@ Stand-alone buffer mode
 
 WIRING
 
-OLED DISPLAY
+OLED DISPLAY I2C 
 
 VCC --> 5v or 3.3v
 
