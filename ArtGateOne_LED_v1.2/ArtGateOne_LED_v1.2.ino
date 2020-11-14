@@ -69,7 +69,7 @@ void setup()
 
   if (EEPROM.read(550) == 0 || EEPROM.read(550) == 255) {// komórka kontrolna - jesli inny reset & save
     EEPROM.update(512, 1);    //zapis DHCP off
-    EEPROM.update(513, 10);   //IP
+    EEPROM.update(513, 2);   //IP (2.0.0.10)
     EEPROM.update(514, 0);
     EEPROM.update(515, 0);
     EEPROM.update(516, 10);
