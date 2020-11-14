@@ -1,6 +1,6 @@
 # ArtGateOne-LED
 ArtGateOne-LED
-This is simple artnet node to controll ws28xx led strip 170 x rgb.
+This is simple art-net node to controll ws28xx led strip 170 x rgb.
 
 Required: 
 
