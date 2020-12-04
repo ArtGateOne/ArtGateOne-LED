@@ -389,12 +389,11 @@ void loop()
     Udp.read(packetArtPoolReplyfer, 18);
     if (packetArtPoolReplyfer[15] == intN && packetArtPoolReplyfer[14] == intUniverse) { //check artnet universe
 
-      int ch = 0;
-      for (unsigned int i = 0; i <= strip.numPixels(); i = i + 3) {
+      for (unsigned int i = 1; i <= 171; i++) {
         Udp.read(packetArtPoolReplyfer, 3);
-        strip.setPixelColor(ch, packetArtPoolReplyfer[0], packetArtPoolReplyfer[1], packetArtPoolReplyfer[2]);
-        ch++;
+        strip.setPixelColor(i, packetArtPoolReplyfer[0], packetArtPoolReplyfer[1], packetArtPoolReplyfer[2]);
       }
+      
       Udp.read(packetArtPoolReplyfer, 2);
       //strip.setBrightness(packetArtPoolReplyfer[1]);//Master Dimmer
       strip.show();
