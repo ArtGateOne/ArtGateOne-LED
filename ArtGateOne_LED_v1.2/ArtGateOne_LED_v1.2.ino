@@ -389,7 +389,7 @@ void loop()
     Udp.read(packetArtPoolReplyfer, 18);
     if (packetArtPoolReplyfer[15] == intN && packetArtPoolReplyfer[14] == intUniverse) { //check artnet universe
 
-      for (unsigned int i = 1; i <= 171; i++) {
+      for (unsigned int i = 0; i <= 170; i++) {
         Udp.read(packetArtPoolReplyfer, 3);
         strip.setPixelColor(i, packetArtPoolReplyfer[0], packetArtPoolReplyfer[1], packetArtPoolReplyfer[2]);
       }
