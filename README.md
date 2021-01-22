@@ -64,13 +64,3 @@ SSD1306Ascii
 
 Andafruit_NeoPixel
 
-some led strips need change line 392
-
-for (unsigned int i = 0; i <= 170; i++) {
-
-to
-
-for (unsigned int i = 1; i <= 171; i++) {
-
-
-
