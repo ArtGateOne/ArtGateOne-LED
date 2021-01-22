@@ -13,9 +13,8 @@
 #include <EEPROM.h>
 // On a Trinket or Gemma we suggest changing this to 1:
 #define LED_PIN    6
-
-// How many NeoPixels are attached to the Arduino?
-#define LED_COUNT 170
+#define LED_COUNT 170 // How many NeoPixels are attached to the Arduino?
+#define LED_BRIGHTNESS 10
 
 // Declare our NeoPixel strip object:
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -51,7 +50,7 @@ unsigned int intUniverse = ((intS * 16) + intU);
 byte mac[] = {EEPROM.read(525), EEPROM.read(526), EEPROM.read(527), EEPROM.read(528), EEPROM.read(529), EEPROM.read(530)};
 IPAddress ip(EEPROM.read(513), EEPROM.read(514), EEPROM.read(515), EEPROM.read(516));
 unsigned int localPort = 6454;      // local port to listen on
-unsigned char packetArtPoolReplyfer[18];  // ArtPoolReplyfer to hold incoming packet,
+unsigned char readBuffer[18];  // ArtPoolReplyfer to hold incoming packet,
 
 EthernetUDP Udp;
 EthernetServer server(80);
@@ -60,7 +59,7 @@ void setup()
 {
   strip.begin();            // INITIALIZE NeoPixel strip object (REQUIRED)
   strip.show();             // Turn OFF all pixels ASAP
-  strip.setBrightness(10);  //strip.setBrightness(255); // Set BRIGHTNESS to 10 (max = 255)
+  strip.setBrightness(LED_BRIGHTNESS);  //strip.setBrightness(255); // Set BRIGHTNESS to 10 (max = 255) optimal 127
 
   oled.begin(&Adafruit128x32, I2C_ADDRESS);
   oled.setFont(Arial14);
@@ -69,7 +68,7 @@ void setup()
 
   if (EEPROM.read(550) == 0 || EEPROM.read(550) == 255) {// komórka kontrolna - jesli inny reset & save
     EEPROM.update(512, 1);    //zapis DHCP off
-    EEPROM.update(513, 2);   //IP (2.0.0.10)
+    EEPROM.update(513, 10);   //IP
     EEPROM.update(514, 0);
     EEPROM.update(515, 0);
     EEPROM.update(516, 10);
@@ -122,7 +121,7 @@ void setup()
   displaydata();
 
   if (EEPROM.read(534) == 1) {
-    for (unsigned int i = 0; i < strip.numPixels(); i++) {
+    for (unsigned int i = 0; i <= strip.numPixels(); i++) {
       strip.setPixelColor(i, EEPROM.read(i * 3), EEPROM.read((i * 3) + 1), EEPROM.read((i * 3) + 2));
     }
     strip.show();
@@ -337,7 +336,7 @@ void loop()
           client.println(F("</head>"));
           client.println(F("<body>"));
           client.println(F("<div>"));
-          //client.println(F("<h2>ArtGateOne</h2>"));
+          client.println(F("<h2>ArtGateOne</h2>"));
           client.println(F("<h2>WAIT ...</h2>"));
           client.println(F("</div>"));
           client.println(F("</form>"));
@@ -386,16 +385,15 @@ void loop()
   if (packetSize == 530) {
 
     // read the packet into packetArtPoolReplyffer
-    Udp.read(packetArtPoolReplyfer, 18);
-    if (packetArtPoolReplyfer[15] == intN && packetArtPoolReplyfer[14] == intUniverse) { //check artnet universe
+    Udp.read(readBuffer, 18);
+    if (readBuffer[15] == intN && readBuffer[14] == intUniverse) { //check artnet universe
 
-      for (unsigned int i = 0; i <= 170; i++) {
-        Udp.read(packetArtPoolReplyfer, 3);
-        strip.setPixelColor(i, packetArtPoolReplyfer[0], packetArtPoolReplyfer[1], packetArtPoolReplyfer[2]);
+      for (unsigned int i = 0; i <= 169; i++) {
+        Udp.read(readBuffer, 3);
+        strip.setPixelColor(i, readBuffer[0], readBuffer[1], readBuffer[2]);
       }
-      
-      Udp.read(packetArtPoolReplyfer, 2);
-      //strip.setBrightness(packetArtPoolReplyfer[1]);//Master Dimmer
+      Udp.read(readBuffer, 2);
+      //strip.setBrightness(readBuffer[1]);//Master Dimmer readBuffer[0] - ch511, readBuffer[1] - ch512
       strip.show();
     }
   }
@@ -403,7 +401,7 @@ void loop()
 
 
 void makeArtPoolReply(){
-      ArtPoolReply[0] = byte('A'); // A
+    ArtPoolReply[0] = byte('A'); // A
     ArtPoolReply[1] = byte('r'); // r
     ArtPoolReply[2] = byte('t'); // t
     ArtPoolReply[3] = byte('-'); // -
@@ -530,8 +528,6 @@ void makeArtPoolReply(){
     }*/
   return;
   }
-
-
 
 
 void datadecode() {
@@ -671,7 +667,7 @@ void datadecode() {
           EEPROM.update(534, data);
         } else {
           EEPROM.update(534, 1);
-          // nagraj data do eprom
+          // save piexel color data to eeprom
           /*for ( i = 0; i <= 511; i++) {
             //EEPROM.update(i, ArduinoDmx0.TxArtPoolReplyfer[i]);
             }*/
