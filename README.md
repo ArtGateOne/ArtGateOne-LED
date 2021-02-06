@@ -48,13 +48,9 @@ GND --> GND
 
 ---
 
-IN THIS SCETCH - LINE 61
-
-Brightnes i set to 10!
-
-U CAN change it to 255 max
-
-Optimal is 127
+default
+ip 2.0.0.10
+mask 255.0.0.0
 
 ------------
 
