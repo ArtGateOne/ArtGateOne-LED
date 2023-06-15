@@ -54,6 +54,13 @@ mask 255.0.0.0
 
 ------------
 
+U can configure it - use web browser - enter node ip
+
+A3 pin to Groun = Factory Reset
+
+-----------------------
+
+
 Library required
 
 SSD1306Ascii
