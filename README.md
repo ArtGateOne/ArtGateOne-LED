@@ -67,3 +67,6 @@ SSD1306Ascii
 
 Andafruit_NeoPixel
 
+------------------------
+
+"Art-Net™ Designed by and Copyright Artistic Licence Engineering Ltd"
