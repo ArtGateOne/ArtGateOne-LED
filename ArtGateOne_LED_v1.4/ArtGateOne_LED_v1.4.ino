@@ -1,5 +1,5 @@
 /*
-  ArtGateOne LED v1.4.1
+  ArtGateOne LED v1.4.4
 */
 
 #include <Adafruit_NeoPixel.h>
@@ -38,7 +38,7 @@ unsigned int datalen;
 int data;
 String strwww = String();
 
-byte ArtPoolReply[239];
+byte ArtPollReply[239];
 
 // Get data from EEPROM
 byte intN = EEPROM.read(531);  // NET
@@ -128,7 +128,7 @@ void setup() {
     strip.show();
   }
 
-  makeArtPoolReply();
+  makeArtPollReply();
 
 }  // end setup()
 
@@ -361,7 +361,8 @@ void loop() {
             IPAddress newGateway(EEPROM.read(521), EEPROM.read(522), EEPROM.read(523), EEPROM.read(524));
             Ethernet.setGatewayIP(newGateway);
           }
-          makeArtPoolReply();
+          IPAddress localIP = Ethernet.localIP();
+          makeArtPollReply();
           delay(500);
           displaydata();
           break;
@@ -380,14 +381,14 @@ void loop() {
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize == 14 || packetSize == 18) {
-    // send a ArtPoolReply to the IP address and port that sent us the packet we received
+    // send a ArtPollReply to the IP address and port that sent us the packet we received
     // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Udp.beginPacket(0xFFFFFFFF, Udp.remotePort());
-    Udp.write(ArtPoolReply, 239);  //  ArtPoolReplyLen = 239;
+    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+    Udp.write(ArtPollReply, 239);  //  ArtPollReplyLen = 239;
     Udp.endPacket();
   } else if (packetSize == 530) {
 
-    // read the packet into packetArtPoolReplyffer
+    // read the packet into packetArtPollReplyffer
     Udp.read(readBuffer, 18);
     if (readBuffer[15] == intN && readBuffer[14] == intUniverse) {  // check artnet universe
 
@@ -402,131 +403,131 @@ void loop() {
   }
 }  // end loop()
 
-void makeArtPoolReply() {
-  ArtPoolReply[0] = byte('A');  // A
-  ArtPoolReply[1] = byte('r');  // r
-  ArtPoolReply[2] = byte('t');  // t
-  ArtPoolReply[3] = byte('-');  // -
-  ArtPoolReply[4] = byte('N');  // N
-  ArtPoolReply[5] = byte('e');  // e
-  ArtPoolReply[6] = byte('t');  // t
-  ArtPoolReply[7] = 0x00;       // 0x00
+void makeArtPollReply() {
+  ArtPollReply[0] = byte('A');  // A
+  ArtPollReply[1] = byte('r');  // r
+  ArtPollReply[2] = byte('t');  // t
+  ArtPollReply[3] = byte('-');  // -
+  ArtPollReply[4] = byte('N');  // N
+  ArtPollReply[5] = byte('e');  // e
+  ArtPollReply[6] = byte('t');  // t
+  ArtPollReply[7] = 0x00;       // 0x00
 
-  ArtPoolReply[8] = 0x00;  // OpCode[0]
-  ArtPoolReply[9] = 0x21;  // OpCode[1]
+  ArtPollReply[8] = 0x00;  // OpCode[0]
+  ArtPollReply[9] = 0x21;  // OpCode[1]
 
-  ArtPoolReply[10] = Ethernet.localIP()[0];  // IPV4 [0]
-  ArtPoolReply[11] = Ethernet.localIP()[1];  // IPV4 [1]
-  ArtPoolReply[12] = Ethernet.localIP()[2];  // IPV4 [2]
-  ArtPoolReply[13] = Ethernet.localIP()[3];  // IPV4 [3]
+  ArtPollReply[10] = Ethernet.localIP()[0];  // IPV4 [0]
+  ArtPollReply[11] = Ethernet.localIP()[1];  // IPV4 [1]
+  ArtPollReply[12] = Ethernet.localIP()[2];  // IPV4 [2]
+  ArtPollReply[13] = Ethernet.localIP()[3];  // IPV4 [3]
 
-  ArtPoolReply[14] = 0x36;  // IP Port Low
-  ArtPoolReply[15] = 0x19;  // IP Port Hi
+  ArtPollReply[14] = 0x36;  // IP Port Low
+  ArtPollReply[15] = 0x19;  // IP Port Hi
 
-  ArtPoolReply[16] = 0x01;  // High byte of Version
-  ArtPoolReply[17] = 0x04;  // Low byte of Version
+  ArtPollReply[16] = 0x01;  // High byte of Version
+  ArtPollReply[17] = 0x04;  // Low byte of Version
 
-  ArtPoolReply[18] = intN;  // NetSwitch
-  ArtPoolReply[19] = intS;  // Net Sub Switch
-  ArtPoolReply[20] = 0xFF;  // 0x04; // OEMHi
-  ArtPoolReply[21] = 0xFF;  // 0xB9; // OEMLow
-  ArtPoolReply[22] = 0x00;  // Ubea Version
-  ArtPoolReply[23] = 0xF0;  // Status1
-  ArtPoolReply[24] = 0x00;  // ESTA LO 0x41; //
-  ArtPoolReply[25] = 0x00;  // ESTA HI  0x4D; //
+  ArtPollReply[18] = intN;  // NetSwitch
+  ArtPollReply[19] = intS;  // Net Sub Switch
+  ArtPollReply[20] = 0xFF;  // 0x04; // OEMHi
+  ArtPollReply[21] = 0xFF;  // 0xB9; // OEMLow
+  ArtPollReply[22] = 0x00;  // Ubea Version
+  ArtPollReply[23] = 0xF0;  // Status1
+  ArtPollReply[24] = 0x00;  // ESTA LO 0x41; //
+  ArtPollReply[25] = 0x00;  // ESTA HI  0x4D; //
 
-  ArtPoolReply[26] = byte('A');  // A  //Short Name
-  ArtPoolReply[27] = byte('r');  // r
-  ArtPoolReply[28] = byte('t');  // t
-  ArtPoolReply[29] = byte('G');  // G
-  ArtPoolReply[30] = byte('a');  // a
-  ArtPoolReply[31] = byte('t');  // t
-  ArtPoolReply[32] = byte('e');  // e
-  ArtPoolReply[33] = byte('O');  // a
-  ArtPoolReply[34] = byte('n');  // t
-  ArtPoolReply[35] = byte('e');  // e
+  ArtPollReply[26] = byte('A');  // A  //Short Name
+  ArtPollReply[27] = byte('r');  // r
+  ArtPollReply[28] = byte('t');  // t
+  ArtPollReply[29] = byte('G');  // G
+  ArtPollReply[30] = byte('a');  // a
+  ArtPollReply[31] = byte('t');  // t
+  ArtPollReply[32] = byte('e');  // e
+  ArtPollReply[33] = byte('O');  // a
+  ArtPollReply[34] = byte('n');  // t
+  ArtPollReply[35] = byte('e');  // e
 
   for (int i = 36; i <= 43; i++) {  // Short Name
-    ArtPoolReply[i] = 0x00;
+    ArtPollReply[i] = 0x00;
   }
 
-  ArtPoolReply[44] = byte('A');  // A  //Long Name
-  ArtPoolReply[45] = byte('r');  // r
-  ArtPoolReply[46] = byte('t');  // t
-  ArtPoolReply[47] = byte('G');  // G
-  ArtPoolReply[48] = byte('a');  // a
-  ArtPoolReply[49] = byte('t');  // t
-  ArtPoolReply[50] = byte('e');  // e
-  ArtPoolReply[51] = byte('O');  // O
-  ArtPoolReply[52] = byte('n');  // n
-  ArtPoolReply[53] = byte('e');  // e
-  ArtPoolReply[54] = byte(' ');  //
-  ArtPoolReply[55] = byte('L');  // L
-  ArtPoolReply[56] = byte('E');  // E
-  ArtPoolReply[57] = byte('D');  // D
-  ArtPoolReply[58] = byte(' ');  //
-  ArtPoolReply[59] = byte('1');  // 1
-  ArtPoolReply[60] = byte('.');  // .
-  ArtPoolReply[61] = byte('4');  // 4
+  ArtPollReply[44] = byte('A');  // A  //Long Name
+  ArtPollReply[45] = byte('r');  // r
+  ArtPollReply[46] = byte('t');  // t
+  ArtPollReply[47] = byte('G');  // G
+  ArtPollReply[48] = byte('a');  // a
+  ArtPollReply[49] = byte('t');  // t
+  ArtPollReply[50] = byte('e');  // e
+  ArtPollReply[51] = byte('O');  // O
+  ArtPollReply[52] = byte('n');  // n
+  ArtPollReply[53] = byte('e');  // e
+  ArtPollReply[54] = byte(' ');  //
+  ArtPollReply[55] = byte('L');  // L
+  ArtPollReply[56] = byte('E');  // E
+  ArtPollReply[57] = byte('D');  // D
+  ArtPollReply[58] = byte(' ');  //
+  ArtPollReply[59] = byte('1');  // 1
+  ArtPollReply[60] = byte('.');  // .
+  ArtPollReply[61] = byte('4');  // 4
 
   for (int i = 62; i <= 107; i++) {  // Long Name
-    ArtPoolReply[i] = 0x00;
+    ArtPollReply[i] = 0x00;
   }
 
   for (int i = 108; i <= 171; i++) {  // NodeReport
-    ArtPoolReply[i] = 0x00;
+    ArtPollReply[i] = 0x00;
   }
 
-  ArtPoolReply[172] = 0x00;  // NumPorts Hi
-  ArtPoolReply[173] = 0x01;  // NumPorts Lo
-  ArtPoolReply[174] = 0x80;  // Port 0 Type
-  ArtPoolReply[175] = 0x00;  // Port 1 Type
-  ArtPoolReply[176] = 0x00;  // Port 2 Type
-  ArtPoolReply[177] = 0x00;  // Port 3 Type
-  ArtPoolReply[178] = 0x00;  // GoodInput 0
-  ArtPoolReply[179] = 0x00;  // GoodInput 1
-  ArtPoolReply[180] = 0x00;  // GoodInput 2
-  ArtPoolReply[181] = 0x00;  // GoodInput 3
-  ArtPoolReply[182] = 0x80;  // GoodOutput 0
-  ArtPoolReply[183] = 0x00;  // GoodOutput 1
-  ArtPoolReply[184] = 0x00;  // GoodOutput 2
-  ArtPoolReply[185] = 0x00;  // GoodOutput 3
-  ArtPoolReply[186] = 0x00;  // SwIn 0
-  ArtPoolReply[187] = 0x00;  // SwIn 1
-  ArtPoolReply[188] = 0x00;  // SwIn 2
-  ArtPoolReply[189] = 0x00;  // SwIn 3
-  ArtPoolReply[190] = intU;  // SwOut 0//ODBIERA UNIVERSE NR
-  ArtPoolReply[191] = 0x00;  // SwOut 1
-  ArtPoolReply[192] = 0x00;  // SwOut 2
-  ArtPoolReply[193] = 0x00;  // SwOut 3
-  ArtPoolReply[194] = 0x01;  // SwVideo
-  ArtPoolReply[195] = 0x00;  // SwMacro
-  ArtPoolReply[196] = 0x00;  // SwRemote
-  ArtPoolReply[197] = 0x00;  // Spare
-  ArtPoolReply[198] = 0x00;  // Spare
-  ArtPoolReply[199] = 0x00;  // Spare
-  ArtPoolReply[200] = 0x00;  // Style
+  ArtPollReply[172] = 0x00;  // NumPorts Hi
+  ArtPollReply[173] = 0x01;  // NumPorts Lo
+  ArtPollReply[174] = 0x80;  // Port 0 Type
+  ArtPollReply[175] = 0x00;  // Port 1 Type
+  ArtPollReply[176] = 0x00;  // Port 2 Type
+  ArtPollReply[177] = 0x00;  // Port 3 Type
+  ArtPollReply[178] = 0x00;  // GoodInput 0
+  ArtPollReply[179] = 0x00;  // GoodInput 1
+  ArtPollReply[180] = 0x00;  // GoodInput 2
+  ArtPollReply[181] = 0x00;  // GoodInput 3
+  ArtPollReply[182] = 0x80;  // GoodOutput 0
+  ArtPollReply[183] = 0x00;  // GoodOutput 1
+  ArtPollReply[184] = 0x00;  // GoodOutput 2
+  ArtPollReply[185] = 0x00;  // GoodOutput 3
+  ArtPollReply[186] = 0x00;  // SwIn 0
+  ArtPollReply[187] = 0x00;  // SwIn 1
+  ArtPollReply[188] = 0x00;  // SwIn 2
+  ArtPollReply[189] = 0x00;  // SwIn 3
+  ArtPollReply[190] = intU;  // SwOut 0//ODBIERA UNIVERSE NR
+  ArtPollReply[191] = 0x00;  // SwOut 1
+  ArtPollReply[192] = 0x00;  // SwOut 2
+  ArtPollReply[193] = 0x00;  // SwOut 3
+  ArtPollReply[194] = 0x01;  // SwVideo
+  ArtPollReply[195] = 0x00;  // SwMacro
+  ArtPollReply[196] = 0x00;  // SwRemote
+  ArtPollReply[197] = 0x00;  // Spare
+  ArtPollReply[198] = 0x00;  // Spare
+  ArtPollReply[199] = 0x00;  // Spare
+  ArtPollReply[200] = 0x00;  // Style
   // MAC ADDRESS
-  ArtPoolReply[201] = mac[0];  // MAC HI
-  ArtPoolReply[202] = mac[1];  // MAC
-  ArtPoolReply[203] = mac[2];  // MAC
-  ArtPoolReply[204] = mac[3];  // MAC
-  ArtPoolReply[205] = mac[4];  // MAC
-  ArtPoolReply[206] = mac[5];  // MAC LO
+  ArtPollReply[201] = mac[0];  // MAC HI
+  ArtPollReply[202] = mac[1];  // MAC
+  ArtPollReply[203] = mac[2];  // MAC
+  ArtPollReply[204] = mac[3];  // MAC
+  ArtPollReply[205] = mac[4];  // MAC
+  ArtPollReply[206] = mac[5];  // MAC LO
 
-  ArtPoolReply[207] = 0x00;  // BIND IP 0
-  ArtPoolReply[208] = 0x00;  // BIND IP 1
-  ArtPoolReply[209] = 0x00;  // BIND IP 2
-  ArtPoolReply[210] = 0x00;  // BIND IP 3
-  ArtPoolReply[211] = 0x00;  // BInd Index
+  ArtPollReply[207] = 0x00;  // BIND IP 0
+  ArtPollReply[208] = 0x00;  // BIND IP 1
+  ArtPollReply[209] = 0x00;  // BIND IP 2
+  ArtPollReply[210] = 0x00;  // BIND IP 3
+  ArtPollReply[211] = 0x00;  // BInd Index
 
-  ArtPoolReply[212] = 0x05;  // Status2
+  ArtPollReply[212] = 0x05;  // Status2
   if (EEPROM.read(512) == 0) {
-    ArtPoolReply[212] = 0x07;  // DHCP USED
+    ArtPollReply[212] = 0x07;  // DHCP USED
   }
 
   /*for (int i = 213; i <= 239; i++) {  //Filler
-    ArtPoolReply[i] = 0x00;
+    ArtPollReply[i] = 0x00;
     }*/
   return;
 }
@@ -670,7 +671,7 @@ void datadecode() {
           EEPROM.update(534, 1);
           // save piexel color data to eeprom
           /*for ( i = 0; i <= 511; i++) {
-            //EEPROM.update(i, ArduinoDmx0.TxArtPoolReplyfer[i]);
+            //EEPROM.update(i, ArduinoDmx0.TxArtPollReplyfer[i]);
             }*/
           for (i = 0; i <= (strip.numPixels() - 1); i++) {
             EEPROM.update((i * 3), (strip.getPixelColor(i) >> 16));
