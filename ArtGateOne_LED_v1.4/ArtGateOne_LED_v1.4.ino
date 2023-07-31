@@ -1,5 +1,5 @@
 /*
-  ArtGateOne LED v1.4.4
+  ArtGateOne LED v1.4.5
 */
 
 #include <Adafruit_NeoPixel.h>
@@ -14,8 +14,8 @@
 #define LED_PIN 6
 #define LED_COUNT 170      // How many NeoPixels are attached to the Arduino? - MAX 170 RGB
 #define LED_BRIGHTNESS 50  // 1-255
-
-const int analogPin = A3;
+#define analogPin A3       //Factory default
+#define I2C_ADDRESS 0x3C   // OLED I2C Addres
 
 // Declare our NeoPixel strip object:
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
@@ -28,11 +28,9 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 //   NEO_RGB     Pixels are wired for RGB bitstream (v1 FLORA pixels, not v2)
 //   NEO_RGBW    Pixels are wired for RGBW bitstream (NeoPixel RGBW products)
 
-// 0X3C+SA0 - 0x3C or 0x3D
-#define I2C_ADDRESS 0x3C  // OLED I2C Addres
-
 SSD1306AsciiAvrI2c oled;
 
+bool invert = false;
 int post = 0;
 unsigned int datalen;
 int data;
@@ -78,10 +76,10 @@ void setup() {
     EEPROM.update(518, 0);
     EEPROM.update(519, 0);
     EEPROM.update(520, 0);
-    EEPROM.update(521, 10);  // gateway
+    EEPROM.update(521, 0);  // gateway
     EEPROM.update(522, 0);
     EEPROM.update(523, 0);
-    EEPROM.update(524, 1);
+    EEPROM.update(524, 0);
     EEPROM.update(525, 222);  // mac adres
     EEPROM.update(526, 173);  // mac
     EEPROM.update(527, 190);  // mac
@@ -381,6 +379,8 @@ void loop() {
   // if there's data available, read a packet
   int packetSize = Udp.parsePacket();
   if (packetSize == 14 || packetSize == 18) {
+    invert = !invert;
+    oled.invertDisplay(invert);
     // send a ArtPollReply to the IP address and port that sent us the packet we received
     // Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
@@ -713,7 +713,7 @@ int datamac(int i) {
 
 void displaydata() {
   oled.clear();
-  oled.print("IP : ");
+  oled.print(" IP : ");
   oled.print(Ethernet.localIP());
   if (EEPROM.read(534) == 1) {
     oled.println("  BS");
@@ -728,7 +728,7 @@ void displaydata() {
   oled.print("  Uni ");
   oled.print(intU, HEX);
   */
-  oled.print("Universe ");
+  oled.print(" Universe ");
   oled.print(intUniverse);
   return;
 }  // end displaydata()
