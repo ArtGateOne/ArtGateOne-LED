@@ -484,7 +484,7 @@ void makeArtPollReply() {
   ArtPollReply[175] = 0x00;  // Port 1 Type
   ArtPollReply[176] = 0x00;  // Port 2 Type
   ArtPollReply[177] = 0x00;  // Port 3 Type
-  ArtPollReply[178] = 0x00;  // GoodInput 0
+  ArtPollReply[178] = 0x08;  // GoodInput 0
   ArtPollReply[179] = 0x00;  // GoodInput 1
   ArtPollReply[180] = 0x00;  // GoodInput 2
   ArtPollReply[181] = 0x00;  // GoodInput 3
